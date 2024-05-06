@@ -1,0 +1,559 @@
+{
+    "openapi": "3.1.0",
+    "info":{
+        "title": "Projet Final Api",
+        "summary": "Une api pour la gestion de tâche et de sous-tâche",
+        "description": "Une api qui permet d'ajouter des tâches qui on un titre, une description, une date de début et de fin ainsi qu'une option pour s'avoir si elle on été complétées. De plus, on peut rajouter des sous-tâches au tâche, qui eu on seulement un titre et une option pour s'avoir si elle on été complétée.",
+        "contact": {
+            "name": "API Support",
+            "email": "2238950@carrefour.cegepvicto.ca"
+        },
+        "version": "1.0.0"
+    },
+    "servers" : [
+        {
+            "url": "http://api.profs.ca",
+            "description": "Serveur en ligne"
+        },
+        {
+            "url": "http://localhost:3000/",
+            "description": "Serveur de développement"
+        }
+    ],
+    "paths" : {
+        "/api/getTaches" : {
+            "get": {
+                "description": "Retourne la liste de toutes les tâches. Par default, retourne seulement les tâches qui ne sont pas terminées",
+                "summary": "Liste des tâches",
+                "tags": [ "getTaches" ],
+                "security": [{ "CleApiAuth": [] }],
+                "parameters": [
+                    {
+                        "name": "all",
+                        "in": "query",
+                        "description": "Si oui ou non, afficher toutes les tâches",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32",
+                            "minimum": 0,
+                            "maximum": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Toutes les tâches, complétées ou pas.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/tache"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé Api invalide / manquante"
+                    },
+                    "500": {
+                        "description": "Erreur d'obtention des données"
+                    }
+                }
+            }
+        },
+        "/api/getTache/{id}" : {
+            "get": {
+                "description": "Retourne les détails d'une tâche.",
+                "summary": "Détails d'une tâche",
+                "tags": [ "getTache" ],
+                "security": [{ "CleApiAuth": [] }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "L'id de la tâche",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Les détails de la tâche.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/tache"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Clé Api invalide / manquante"
+                    },
+                    "500": {
+                        "description": "Erreur d'obtention des données"
+                    }
+                }
+            }
+        },
+        "/api/modifyTask/addTache" : {
+            "post": {
+                "description": "Ajoute une tâche.",
+                "summary": "Ajoute une tâche.",
+                "tags": [ "addTache" ],
+                "security": [{ "CleApiAuth": [] }],
+                "requestBody": {
+                    "description": "Données de la tâche à ajouter",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ajoutTache"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "La tâche a été ajouter avec succès."
+                    },
+                    "401": {
+                        "description": "Clé Api invalide / manquante"
+                    },
+                    "405": {
+                        "description": "Des champs requis ne sont pas inclus."
+                    },
+                    "500": {
+                        "description": "Erreur d'obtention des données"
+                    }
+                }
+            }
+        },
+        "/api/modifyTask/removeTache/{id}" : {
+            "delete": {
+                "description": "Supprime une tâche.",
+                "summary": "Supprime une tâche.",
+                "tags": [ "removeTache" ],
+                "security": [{ "CleApiAuth": [] }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "L'id de la tâche à retirer.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "La tâche a été supprimer avec succès."
+                    },
+                    "401": {
+                        "description": "Clé Api invalide / manquante"
+                    },
+                    "403": {
+                        "description": "Vous n'avez pas les droits de supprimer une tâche qui ne vous appartient pas."
+                    },
+                    "404": {
+                        "description": "Tâche introuvable/n'existe pas"
+                    },
+                    "405": {
+                        "description": "Vous devez fournir l'id de la tâche à supprimer"
+                    },
+                    "500": {
+                        "description": "Erreur d'obtention des données"
+                    }
+                }
+            }
+        },
+        "/api/modifyTask/updateTache/{id}" : {
+            "put": {
+                "description": "Modifie une tâche.",
+                "summary": "Modifie une tâche.",
+                "tags": [ "updateTache" ],
+                "security": [{ "CleApiAuth": [] }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "L'id de la tâche à modifiée.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Données de la tâche à modifiée",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/updateTache"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "La tâche a été modifiée avec succès."
+                    },
+                    "401": {
+                        "description": "Clé Api invalide / manquante"
+                    },
+                    "403": {
+                        "description": "Vous n'avez pas les droits de modifiée une tâche qui ne vous appartient pas."
+                    },
+                    "404": {
+                        "description": "Tâche introuvable/n'existe pas"
+                    },
+                    "405": {
+                        "description": "Vous devez fournir l'id de la tâche à modifiée"
+                    },
+                    "500": {
+                        "description": "Erreur d'obtention des données"
+                    }
+                }
+            }
+        },
+        "/api/modifyTask/updateTacheComplete/{id}" : {
+            "put": {
+                "description": "Compléte une tâche.",
+                "summary": "Compléte une tâche.",
+                "tags": [ "updateTache" ],
+                "security": [{ "CleApiAuth": [] }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "L'id de la tâche à complétée.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "La tâche a été complétée avec succès."
+                    },
+                    "401": {
+                        "description": "Clé Api invalide / manquante"
+                    },
+                    "403": {
+                        "description": "Vous n'avez pas les droits de complétée une tâche qui ne vous appartient pas."
+                    },
+                    "404": {
+                        "description": "Tâche introuvable/n'existe pas"
+                    },
+                    "405": {
+                        "description": "Vous devez fournir l'id de la tâche à complétée"
+                    },
+                    "500": {
+                        "description": "Erreur d'obtention des données"
+                    }
+                }
+            }
+        },
+        "/api/modifySubTask/addSousTache" : {
+            "post": {
+                "description": "Ajoute une sous-tâche.",
+                "summary": "Ajoute une sous-tâche.",
+                "tags": [ "addSousTache" ],
+                "security": [{ "CleApiAuth": [] }],
+                "requestBody": {
+                    "description": "Données de la tâche à ajouter",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ajoutSousTache"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "La sous-tâche a été ajouter avec succès."
+                    },
+                    "401": {
+                        "description": "Clé Api invalide / manquante"
+                    },
+                    "405": {
+                        "description": "Des champs requis ne sont pas inclus."
+                    },
+                    "500": {
+                        "description": "Erreur d'obtention des données"
+                    }
+                }
+            }
+        },
+        "/api/modifySubTask/removeSousTache/{id}" : {
+            "delete": {
+                "description": "Supprime une sous-tâche.",
+                "summary": "Supprime une sous-tâche.",
+                "tags": [ "removeSousTache" ],
+                "security": [{ "CleApiAuth": [] }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "L'id de la sous-tâche à retirer.",
+                        "required": true,
+                        "content": {
+                            "schema": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "La sous-tâche a été supprimer avec succès."
+                    },
+                    "401": {
+                        "description": "Clé Api invalide / manquante"
+                    },
+                    "405": {
+                        "description": "Des champs requis ne sont pas inclus."
+                    },
+                    "500": {
+                        "description": "Erreur d'obtention des données"
+                    }
+                }
+            }
+        },
+        "/api/modifySubTask/updateSousTache/{id}" : {
+            "put": {
+                "description": "Modifie une sous-tâche.",
+                "summary": "Modifie une sous-tâche.",
+                "tags": [ "updateSousTache" ],
+                "security": [{ "CleApiAuth": [] }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "L'id de la sous-tâche à modifier.",
+                        "required": true,
+                        "content": {
+                            "schema": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Données de la sous-tâche à modifiée",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/updateSousTache"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "La sous-tâche a été modifiée avec succès."
+                    },
+                    "401": {
+                        "description": "Clé Api invalide / manquante"
+                    },
+                    "500": {
+                        "description": "Erreur d'obtention des données"
+                    }
+                }
+            }
+        },
+        "/api/modifySubTask/updateSousTacheComplete/{id}" : {
+            "put": {
+                "description": "Compléte une sous-tâche.",
+                "summary": "Compléte une sous-tâche.",
+                "tags": [ "updateSousTache" ],
+                "security": [{ "CleApiAuth": [] }],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "L'id de la sous-tâche à compléter.",
+                        "required": true,
+                        "content": {
+                            "schema": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "La sous-tâche a été complétée avec succès."
+                    },
+                    "401": {
+                        "description": "Clé Api invalide / manquante"
+                    },
+                    "500": {
+                        "description": "Erreur d'obtention des données"
+                    }
+                }
+            }
+        }
+    },
+    "components" : {
+        "schemas": {
+            "tache" : {
+                "type": "object",
+                "required": [
+                    "id",
+                    "user_id",
+                    "titre",
+                    "description",
+                    "date_debut",
+                    "date_echeance",
+                    "complete"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 0
+                    },
+                    "user_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 0
+                    },
+                    "titre": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "date_debut": {
+                        "type": "string"
+                    },
+                    "date_echeance": {
+                        "type": "string"
+                    },
+                    "complete": {
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1,
+                        "minimum": 0
+                    }
+                }
+            },
+            "ajoutTache" : {
+                "type": "object",
+                "required": [
+                    "titre",
+                    "description",
+                    "date_debut",
+                    "date_echeance",
+                    "complete"
+                ],
+                "properties": {
+                    "titre": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "date_debut": {
+                        "type": "string"
+                    },
+                    "date_echeance": {
+                        "type": "string"
+                    },
+                    "complete": {
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1,
+                        "minimum": 0
+                    }
+                }
+            },
+            "updateTache" : {
+                "type": "object",
+                "required": [],
+                "properties": {
+                    "titre": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    },
+                    "date_debut": {
+                        "type": "string"
+                    },
+                    "date_echeance": {
+                        "type": "string"
+                    },
+                    "complete": {
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1,
+                        "minimum": 0
+                    }
+                }
+            },
+            "ajoutSousTache" : {
+                "type": "object",
+                "required": [
+                    "tache_id",
+                    "titre",
+                    "complete"
+                ],
+                "properties": {
+                    "tache_id": {
+                        "type": "integer",
+                        "format": "int32",
+                        "minimum": 0
+                    },
+                    "titre": {
+                        "type": "string"
+                    },
+                    "complete": {
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1,
+                        "minimum": 0
+                    }
+                }
+            },
+            "updateSousTache" : {
+                "type": "object",
+                "required": [],
+                "properties": {
+                    "titre": {
+                        "type": "string"
+                    },
+                    "complete": {
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 1,
+                        "minimum": 0
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "CleApiAuth": {
+                "type": "apiKey",
+                "in": "header",
+                "name": "Authorization",
+                "description": "API key required for authentication"
+            }
+        }
+    }
+}
