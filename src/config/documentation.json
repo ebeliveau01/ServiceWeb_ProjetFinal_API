@@ -12,7 +12,7 @@
     },
     "servers" : [
         {
-            "url": "http://api.profs.ca",
+            "url": "https://serviceweb-projetfinal-api.onrender.com",
             "description": "Serveur en ligne"
         },
         {
@@ -227,7 +227,7 @@
             }
         },
         "/api/modifyTask/updateTacheComplete/{id}" : {
-            "put": {
+            "patch": {
                 "description": "Compléte une tâche.",
                 "summary": "Compléte une tâche.",
                 "tags": [ "updateTache" ],
@@ -377,7 +377,7 @@
             }
         },
         "/api/modifySubTask/updateSousTacheComplete/{id}" : {
-            "put": {
+            "patch": {
                 "description": "Compléte une sous-tâche.",
                 "summary": "Compléte une sous-tâche.",
                 "tags": [ "updateSousTache" ],
