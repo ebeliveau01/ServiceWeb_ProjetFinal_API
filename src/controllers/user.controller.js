@@ -8,22 +8,16 @@ exports.addUser = async (req, res) => {
     var pattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
     let message = "Vous devez fournir:";
 
-    if (!email || !pattern.test(email)) {
-        message += " un email valide"
-    }
+    message += !email || !pattern.test(email) ? " un email valide": "";
 
-    if (!password) {
-        message += ", un mot de passe"
-    }
+    message += !password ? " un mot de passe": "";
 
     if (message != "Vous devez fournir:") {
-        res.status(405).send({
-            "message": message
-        });
+        res.status(405).send({"message": message});
         return;
     }
 
-    const user = await Utilisateur.getUserPassword(email);
+    let user = await Utilisateur.getUserPassword(email);
 
     if (!user) {
         Utilisateur.addUser(email,hashPassword(password),genCleApi())
@@ -46,18 +40,11 @@ exports.newApiKey = async (req, res) => {
     let message = "Vous devez fournir:";
     var cleApi = genCleApi();
 
-    if (!email) {
-        message += " un email valide,"
-    }
-
-    if (!password) {
-        message += " un mot de passe"
-    }
+    message += !email ? " un email valide" : "";
+    message += !password ? " un mot de passe" : "";
 
     if (message != "Vous devez fournir:") {
-        res.status(405).send({
-            "message": message
-        });
+        res.status(405).send({"message": message});
         return;
     }
 

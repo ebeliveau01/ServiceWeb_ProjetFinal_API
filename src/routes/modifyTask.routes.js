@@ -6,15 +6,15 @@ router.post('/tache', (req, res) => {
     Taches.addTache(req, res);
 });
 
-router.delete('/tache/:id', (req, res) => {
+router.delete('/tacheR/:id', (req, res) => {
     Taches.removeTache(req, res);
 });
 
-router.put('/tache/:id', (req, res) => {
+router.put('/tacheU/:id', (req, res) => {
     Taches.updateTache(req, res);
 });
 
-router.patch('/tache/:id', (req, res) => {
+router.patch('/tacheC/:id', (req, res) => {
     Taches.updateTacheComplete(req, res);
 });
 
