@@ -43,7 +43,14 @@ exports.getTache = async (req, res) => {
 exports.getTaches = async (req, res) => {
     let cle_api = req.headers.authorization;
     let user = await Utilisateur.getUser(cle_api);
-    let all = !req.query.all || req.query.all == 0 ? 0: 1;
+    let all = req.query.all;
+
+    if (!all || all == 0) {
+        all = 0;
+    }
+    else {
+        all = 1;
+    }
 
     Taches.getTaches(user.id, all)
     .then((taches) => {
