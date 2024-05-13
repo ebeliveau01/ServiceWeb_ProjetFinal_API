@@ -45,11 +45,8 @@ exports.getTaches = async (req, res) => {
     let user = await Utilisateur.getUser(cle_api);
     let all = req.query.all;
 
-    if (all == undefined || all == 0) {
+    if (!all) {
         all = 0;
-    }
-    else {
-        all = 1;
     }
 
     Taches.getTaches(user.id, all)
