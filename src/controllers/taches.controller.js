@@ -19,7 +19,7 @@ exports.getTache = async (req, res) => {
         }
 
         res.send({
-            "tâche": {
+            "tâche": [{
                 "id": tache.id,
                 "utilisateur_id": tache.utilisateur_id,
                 "titre": tache.titre,
@@ -28,7 +28,7 @@ exports.getTache = async (req, res) => {
                 "date_echeance": tache.date_echeance,
                 "complete": tache.complete,
                 "sous-tâches": sous_taches
-            }
+            }]
         });
     })
     .catch((erreur) => {
